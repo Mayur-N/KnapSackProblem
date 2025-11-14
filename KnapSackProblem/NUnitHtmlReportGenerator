@@ -1,0 +1,65 @@
+using System;
+using System.IO;
+using System.Xml.Xsl;
+
+/// <summary>
+/// A simple class to perform an XSLT transformation 
+/// to convert NUnit XML output to an HTML report.
+/// </summary>
+public class NUnitHtmlReportGenerator
+{
+    /// <summary>
+    /// Generates an HTML report from an NUnit XML file using a specified XSLT template.
+    /// </summary>
+    /// <param name="xmlInputPath">The file path to the NUnit TestResult.xml file.</param>
+    /// <param name="xsltTemplatePath">The file path to the .xslt template file.</param>
+    /// <param name="htmlOutputPath">The file path to write the final report.html to.</param>
+    public void GenerateReport(string xmlInputPath, string xsltTemplatePath, string htmlOutputPath)
+    {
+        try
+        {
+            // Create the XslCompiledTransform object.
+            // Enabling scripts is optional and depends on your XSLT.
+            var xsltSettings = new XsltSettings(false, true); 
+            var xslt = new XslCompiledTransform();
+
+            // Load the XSLT template.
+            xslt.Load(xsltTemplatePath, xsltSettings, null);
+
+            // Create the FileStream for the output.
+            using (var fs = new FileStream(htmlOutputPath, FileMode.Create))
+            {
+                // Perform the transformation.
+                Console.WriteLine($"Generating report from {xmlInputPath}...");
+                xslt.Transform(xmlInputPath, null, fs);
+                Console.WriteLine($"Successfully generated report at {htmlOutputPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error generating report: {ex.Message}");
+            Console.WriteLine(ex.StackTrace);
+        }
+    }
+
+    /// <summary>
+    /// Example of how to use the generator.
+    /// </summary>
+    public static void Main(string[] args)
+    {
+        // --- Example Usage ---
+        // You would call this from your main program.
+        // Make sure these files exist.
+        
+        // string nunitXml = "path/to/TestResult.xml";
+        // string xsltFile = "path/to/nunit-transform.xslt";
+        // string reportFile = "path/to/report.html";
+
+        // NUnitHtmlReportGenerator generator = new NUnitHtmlReportGenerator();
+        // generator.GenerateReport(nunitXml, xsltFile, reportFile);
+        
+        Console.WriteLine("This is the generator class. See Main() for example usage.");
+        Console.WriteLine("You would run 'dotnet test' first to get the TestResult.xml,");
+        Console.WriteLine("then run this program to perform the transformation.");
+    }
+}
